@@ -1,8 +1,6 @@
 #!/bin/bash
 
 # User stuff
-#export CROSS_COMPILE=
-
 VERSION=1.0
 NAME=twentythird-v$VERSION.zip
 TASK=Image
@@ -40,6 +38,7 @@ USAGE() {
   echo "Environment:"
   echo "  ARCH: $ARCH"
   echo "  TASK: $TASK"
+  echo "    CC: $CROSS_COMPILE"
   echo "Status:"
   if isconfig; then
     echo "  Config file exists"
@@ -141,6 +140,9 @@ AUTO() {
 }
 
 mkdir releases -p
+if [[ ! -z "$CROSS_COMPILE" ]] && [[ -d toolchain ]]; then
+  export CROSS_COMPILE=`pwd`/toolchain/bin/aarch64-linux-gnu-
+fi
 
 case "$1" in
       "all" )      ;;
