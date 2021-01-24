@@ -1,0 +1,17 @@
+# Installer
+export VERSION=1.0 # Version of installer
+export NAME=kernel-v$VERSION.zip # Name for installer
+export TASK=Image # Build target, if you don't know what to write there - stay "Image" as task
+
+# Builder info
+export USER= # Your name
+export HOST= # Your host name
+
+# Target info
+export ARCH=arm64 # Arch of target phone
+export ANDROID_VERSION=q # Android version of phone
+export CONFIG=exynos7885-a30s # Defconfig name
+
+# Expert stuff
+export IMAGE= # Image path, unnecessary, doesn't affect image building path
+export CONFILE= # Defconfig path, unnecessary

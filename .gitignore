@@ -115,3 +115,6 @@ all.config
 
 # Toolchain symlink/path
 toolchain
+
+# Config file
+config.sh

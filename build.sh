@@ -1,22 +1,31 @@
 #!/bin/bash
 
-# User stuff
-VERSION=1.0
-NAME=twentythird-v$VERSION.zip
-TASK=Image
-
-# Kbuild
-export KBUILD_BUILD_USER=Hfib
-export KBUILD_BUILD_HOST=4pda
-
-# Make
-export ARCH=arm64
-export ANDROID_MAJOR_VERSION=q
-CONFIG=exynos7885-a30s
+. config.sh
 
 # Zipping
 USEZIP=1
-IMAGE=arch/arm/boot/$TASK
+
+VARS=(VERSION NAME TASK ARCH ANDROID_VERSION CONFIG)
+OPT=(USER HOST IMAGE CONFILE)
+ALL=( "${VARS[@]}" "${OPT[@]}" )
+
+for i in ${VARS[@]}; do
+  if { [[ "$i" == VERSION ]] || [[ "$i" == NAME ]]; } && [[ -z "${!i}" ]]; then
+    echo "Warning: $i isn't specified, no ability to make installer"
+  elif [[ -z "${!i}" ]]; then
+    echo "You should specify $i in your environment or config.sh"
+    echo "NOTE: You man check config.sh.example for some details"
+    exit 1
+  fi
+done
+
+# Aliasing
+export ANDROID_MAJOR_VERSION=$ANDROID_VERSION
+export KBUILD_BUILD_USER=$USER
+export KBUILD_BUILD_HOST=$HOST
+
+: ${IMAGE:=arch/arm/boot/$TASK}
+: ${CONFILE:=arch/$ARCH/configs/"$CONFIG"_defconfig}
 
 # Main stuff
 if [[ -z `which zip` ]]; then
@@ -24,21 +33,32 @@ if [[ -z `which zip` ]]; then
   USEZIP=
 fi
 
+if [[ ! -f "$CONFILE" ]]; then
+  echo "Error: $CONFILE is blank, specify currect defconfig in CONFILE or create it yourself"
+  exit 1
+fi
+
 USAGE() {
   echo "Usage: $0 instruction"
-  echo "Instructions:"
-  echo "  auto   - Build without prompts"
+  echo "Instructions"
+  echo "Trivial:"
   echo "  all    - Build with prompts"
   echo "  config - Configure only"
   echo "  build  - Build only"
   echo "  zip    - Zip only"
+  echo "Manual:"
+  echo "  diff   - Compare .config and default config"
+  echo "  edit   - Edit current config"
+  echo "  save   - Save .config as default config"
+  echo "Miscellaneous:"
+  echo "  auto   - Build without prompts"
   echo "  clean  - Clean repository"
   echo "  help   - Show usage"
   echo "  mhelp  - Run 'make help'"
   echo "Environment:"
-  echo "  ARCH: $ARCH"
-  echo "  TASK: $TASK"
-  echo "    CC: $CROSS_COMPILE"
+  for i in ${ALL[@]}; do
+    echo "  $i - ${!i}"
+  done
   echo "Status:"
   if isconfig; then
     echo "  Config file exists"
@@ -69,10 +89,7 @@ CONFIG() {
 }
 
 BUILD() {
-  if ! isconfig; then
-    echo "Do config first"
-    exit 1
-  fi
+  CHECKCON
   make $TASK
   if [[ $? == 0 ]]; then
     echo "Kernel is built"
@@ -88,10 +105,7 @@ ZIP() {
     exit 1
   fi
 
-  if ! isbuilt; then
-    echo "Do image first"
-    exit 1
-  fi
+  CHECKCON
   rm -f $NAME
 
   cp $IMAGE AnyKernel3
@@ -100,6 +114,24 @@ ZIP() {
   cd ..
 
   echo "Installer is done"
+}
+
+DIFF() {
+  CHECKCON
+
+  diff .config $CONFILE --color=always | less -R
+}
+
+EDIT() {
+  CHECKCON
+
+  make nconfig
+}
+
+SAVE() {
+  CHECKCON
+
+  cp .config $CONFILE
 }
 
 CLEAN() {
@@ -116,8 +148,7 @@ check() {
   fi
 }
 
-isconfig()
-{
+isconfig() {
   if test -f .config; then
     return 0
   else
@@ -125,12 +156,25 @@ isconfig()
   fi
 }
 
-isbuilt()
-{
+isbuilt() {
   if test -f $IMAGE; then
     return 0
   else
     return 1
+  fi
+}
+
+CHECKCON() {
+  if ! isconfig; then
+    echo "Do config first"
+    exit 1
+  fi
+}
+
+CHECKBUILT() {
+  if ! isbuilt; then
+    echo "Do image first"
+    exit 1
   fi
 }
 
@@ -140,16 +184,19 @@ AUTO() {
 }
 
 mkdir releases -p
-if [[ ! -z "$CROSS_COMPILE" ]] && [[ -d toolchain ]]; then
+if [[ -z "$CROSS_COMPILE" ]] && find -L toolchain -name 'gcc-linaro-*-linux-manifest.txt' 2>/dev/null | grep . &>/dev/null; then
   export CROSS_COMPILE=`pwd`/toolchain/bin/aarch64-linux-gnu-
 fi
 
 case "$1" in
       "all" )      ;;
-     "auto" )  AUTO;;
    "config" ) CONFIG; exit 0;;
     "build" ) BUILD ; exit 0;;
       "zip" ) ZIP   ; exit 0;;
+     "diff" ) DIFF  ; exit 0;;
+     "edit" ) EDIT  ; exit 0;;
+     "save" ) SAVE  ; exit 0;;
+     "auto" ) AUTO ;;
     "clean" ) CLEAN ; exit 0;;
     "mhelp" ) HELP ;;
   "help"|"" ) USAGE;;
