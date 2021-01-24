@@ -1,12 +1,14 @@
 #!/bin/bash
 
-. config.sh
+if [[ -f config.sh ]]; then
+  . config.sh
+fi
 
 # Zipping
 USEZIP=1
 
-VARS=(VERSION NAME TASK ARCH ANDROID_VERSION CONFIG)
-OPT=(USER HOST IMAGE CONFILE)
+VARS=(VERSION NAME ARCH ANDROID_VERSION CONFIG)
+OPT=(TASK USER HOST IMAGE CONFILE)
 ALL=( "${VARS[@]}" "${OPT[@]}" )
 
 for i in ${VARS[@]}; do
@@ -24,7 +26,8 @@ export ANDROID_MAJOR_VERSION=$ANDROID_VERSION
 export KBUILD_BUILD_USER=$USER
 export KBUILD_BUILD_HOST=$HOST
 
-: ${IMAGE:=arch/arm/boot/$TASK}
+: ${TASK:=Image}
+: ${IMAGE:=arch/$ARCH/boot/$TASK}
 : ${CONFILE:=arch/$ARCH/configs/"$CONFIG"_defconfig}
 
 # Main stuff
@@ -56,6 +59,7 @@ USAGE() {
   echo "  help   - Show usage"
   echo "  mhelp  - Run 'make help'"
   echo "Environment:"
+  echo "  CC - $CROSS_COMPILE"
   for i in ${ALL[@]}; do
     echo "  $i - ${!i}"
   done
@@ -90,7 +94,7 @@ CONFIG() {
 
 BUILD() {
   CHECKCON
-  make $TASK
+  make -j$((`nproc --all`+2)) $TASK
   if [[ $? == 0 ]]; then
     echo "Kernel is built"
   else
@@ -105,13 +109,13 @@ ZIP() {
     exit 1
   fi
 
-  CHECKCON
-  rm -f $NAME
+  CHECKBUILT
 
-  cp $IMAGE AnyKernel3
-  cd AnyKernel3
-  zip -r ../releases/$NAME *
-  cd ..
+  cp $IMAGE releases/AnyKernel3/$TASK
+  cd releases/AnyKernel3
+  zip -r9 ../zip/$NAME *
+  rm $TASK
+  cd ../..
 
   echo "Installer is done"
 }
@@ -119,7 +123,7 @@ ZIP() {
 DIFF() {
   CHECKCON
 
-  diff .config $CONFILE --color=always | less -R
+  diff $CONFILE .config --color=always | less -R
 }
 
 EDIT() {
@@ -181,9 +185,9 @@ CHECKBUILT() {
 AUTO() {
   : ${FORCE_RECONFIG:=y}
   : ${FORCE_REBUILD:=y}
+  : ${FORCE_INSTALLER:=y}
 }
 
-mkdir releases -p
 if [[ -z "$CROSS_COMPILE" ]] && find -L toolchain -name 'gcc-linaro-*-linux-manifest.txt' 2>/dev/null | grep . &>/dev/null; then
   export CROSS_COMPILE=`pwd`/toolchain/bin/aarch64-linux-gnu-
 fi

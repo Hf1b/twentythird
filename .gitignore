@@ -118,3 +118,6 @@ toolchain
 
 # Config file
 config.sh
+
+# Allow .circleci after '.*' expr
+!.circleci
