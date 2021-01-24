@@ -7,12 +7,12 @@ fi
 # Zipping
 USEZIP=1
 
-VARS=(VERSION NAME ARCH ANDROID_VERSION CONFIG)
+VARS=(NAME ARCH ANDROID_VERSION CONFIG)
 OPT=(TASK USER HOST IMAGE CONFILE)
 ALL=( "${VARS[@]}" "${OPT[@]}" )
 
 for i in ${VARS[@]}; do
-  if { [[ "$i" == VERSION ]] || [[ "$i" == NAME ]]; } && [[ -z "${!i}" ]]; then
+  if [[ "$i" == NAME ]] && [[ -z "${!i}" ]]; then
     echo "Warning: $i isn't specified, no ability to make installer"
   elif [[ -z "${!i}" ]]; then
     echo "You should specify $i in your environment or config.sh"
@@ -113,6 +113,7 @@ ZIP() {
 
   cp $IMAGE releases/AnyKernel3/$TASK
   cd releases/AnyKernel3
+  if [[ ! -d ../zip ]]; then mkdir ../zip; fi
   zip -r9 ../zip/$NAME *
   rm $TASK
   cd ../..
