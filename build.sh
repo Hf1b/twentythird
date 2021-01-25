@@ -74,12 +74,10 @@ USAGE() {
   else
     echo "  Kernel isn't built"
   fi
-  exit 0
 }
 
 HELP() {
   make help
-  exit 0
 }
 
 CONFIG() {
@@ -94,11 +92,13 @@ CONFIG() {
 
 BUILD() {
   CHECKCON
+
+  echo "Kernel $TYPE is being built"
   make -j$((`nproc --all`+2)) $TASK
   if [[ $? == 0 ]]; then
-    echo "Kernel is built"
+    echo "Kernel $TYPE: Kernel is built"
   else
-    echo "Building is failed"
+    echo "Kernel $TYPE: Building is failed"
     exit 1
   fi
 }
@@ -106,19 +106,21 @@ BUILD() {
 ZIP() {
   if [[ -z "$USEZIP" ]]; then
     echo "You can't make installer without \`zip\` utility"
-    exit 1
+    return 1
   fi
 
   CHECKBUILT
 
+  echo "Kernel $TYPE is being zipped"
+
   cp $IMAGE releases/AnyKernel3/$TASK
   cd releases/AnyKernel3
   if [[ ! -d ../zip ]]; then mkdir ../zip; fi
-  zip -r9 ../zip/$NAME *
+  zip -r9 ../zip/$NAME.$TYPE-$VERSION.zip *
   rm $TASK
   cd ../..
 
-  echo "Installer is done"
+  echo "Kernel $TYPE: Installer is done"
 }
 
 DIFF() {
@@ -189,6 +191,20 @@ AUTO() {
   : ${FORCE_INSTALLER:=y}
 }
 
+ENABLE() {
+  sed -i "s/# $1 is not set/$1=y/" .config
+}
+
+DISABLE() {
+  sed -i "s/$1=y/# $1 is not set/" .config
+}
+
+
+MAIN() {
+  BUILD
+  ZIP
+}
+
 if [[ -z "$CROSS_COMPILE" ]] && find -L toolchain -name 'gcc-linaro-*-linux-manifest.txt' 2>/dev/null | grep . &>/dev/null; then
   export CROSS_COMPILE=`pwd`/toolchain/bin/aarch64-linux-gnu-
 fi
@@ -203,11 +219,12 @@ case "$1" in
      "save" ) SAVE  ; exit 0;;
      "auto" ) AUTO ;;
     "clean" ) CLEAN ; exit 0;;
-    "mhelp" ) HELP ;;
-  "help"|"" ) USAGE;;
+    "mhelp" ) HELP  ; exit 0;;
+  "help"|"" ) USAGE ; exit 0;;
   * )
     echo "$0: Unknown instruction: $1"
     USAGE
+    exit 0
     ;;
 esac
 
@@ -230,38 +247,24 @@ else
   CONFIG
 fi
 
-if isbuilt; then
-  printf "Do you want to rebuild kernel (y/n)? "
-  if check FORCE_REBUILD; then
-      case "$FORCE_REBUILD" in
-        y) echo y; BUILD;;
-        n) echo n;;
-      esac
-  else
-    read REBUILD
-    if [[ "$REBUILD" == y ]]; then
-      BUILD
-    else
-      echo "Rebuild is aborted."
-    fi
-  fi
-else
-  BUILD
+if [[ -z "$BUILD_GSI" ]] && [[ -z "$CI" ]]; then
+  printf "Do you want to build kernel for GSI (y/n)? "
+  read BUILD_GSI
 fi
 
-if [[ "$USEZIP" == 1 ]]; then
-  printf "Do you want to make installer (y/n)? "
-  if check FORCE_INSTALLER; then
-    case "$FORCE_INSTALLER" in
-      y) echo y; ZIP;;
-      n) echo n;;
-    esac
-  else
-    read MAKEINS
-    if [[ "$MAKEINS" == y ]]; then
-      ZIP
-    else
-      echo "Zipping is aborted."
-    fi
-  fi
+if [[ "$BUILD_GSI" == y ]]; then
+  ENABLE CONFIG_USB_ANDROID_GOOGLE_MTP
+  TYPE=GSI
+  MAIN
+fi
+
+if [[ -z "$BUILD_ONEUI" ]] && [[ -z "$CI" ]]; then
+  printf "Do you want to build kernel for OneUI (y/n)? "
+  read BUILD_GSI
+fi
+
+if [[ "$BUILD_ONEUI" == y ]]; then
+  DISABLE CONFIG_USB_ANDROID_GOOGLE_MTP
+  TYPE=OneUI
+  MAIN
 fi

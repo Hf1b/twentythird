@@ -6,6 +6,7 @@ jobs:
 
     working_directory: ~/kernel
     environment:
+      NAME: twentythird
       ARCH: arm64
       ANDROID_VERSION: q
       CONFIG: exynos7885-a30s
@@ -25,8 +26,7 @@ jobs:
           rm linaro.tar.xz
           mv gcc-linaro-* toolchain
       - run: |
-          export VERS=`git describe --tags`
-          export NAME=twentythird-$VERS.zip
+          export VERSION=`git describe --tags`
           ./build.sh auto
       - store_artifacts:
           path: ~/kernel/releases/zip
