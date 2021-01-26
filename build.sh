@@ -186,6 +186,8 @@ CHECKBUILT() {
 }
 
 AUTO() {
+  : ${BUILD_GSI:=y}
+  : ${BUILD_ONEUI:=y}
   : ${FORCE_RECONFIG:=y}
   : ${FORCE_REBUILD:=y}
   : ${FORCE_INSTALLER:=y}
