@@ -96,9 +96,9 @@ BUILD() {
   echo "Kernel $TYPE is being built"
   make -j$((`nproc --all`+2)) $TASK
   if [[ $? == 0 ]]; then
-    echo "Kernel $TYPE: Kernel is built"
+    ECHO "Is built"
   else
-    echo "Kernel $TYPE: Building is failed"
+    ECHO "Building is failed"
     exit 1
   fi
 }
@@ -111,7 +111,7 @@ ZIP() {
 
   CHECKBUILT
 
-  echo "Kernel $TYPE is being zipped"
+  ECHO "Is being zipped"
 
   cp $IMAGE releases/AnyKernel3/$TASK
   cd releases/AnyKernel3
@@ -120,7 +120,7 @@ ZIP() {
   rm $TASK
   cd ../..
 
-  echo "Kernel $TYPE: Installer is done"
+  ECHO "Installer is done"
 }
 
 DIFF() {
@@ -145,6 +145,14 @@ CLEAN() {
   make clean
   make mrproper
   # git clean -Xdf
+}
+
+ECHO() {
+  if [[ ! -z "$TYPE" ]]; then
+    echo "Kernel $TYPE: $@"
+  else
+    echo "Kernel: $@"
+  fi
 }
 
 check() {
@@ -205,6 +213,7 @@ DISABLE() {
 MAIN() {
   BUILD
   ZIP
+  CLEAN
 }
 
 if [[ -z "$CROSS_COMPILE" ]] && find -L toolchain -name 'gcc-linaro-*-linux-manifest.txt' 2>/dev/null | grep . &>/dev/null; then
@@ -230,43 +239,30 @@ case "$1" in
     ;;
 esac
 
-if isconfig; then
-  printf "Do you want to update \'.config\' (y/n)? "
-  if check FORCE_RECONFIG; then
-    case "$FORCE_RECONFIG" in
-      y) echo y; CONFIG;;
-      n) echo n;;
-    esac
-  else
-    read RECONFIG
-    if [[ "$RECONFIG" == y ]]; then
-      CONFIG
-    else
-      echo "Reconfig is aborted."
-    fi
-  fi
-else
-  CONFIG
-fi
-
 if [[ -z "$BUILD_GSI" ]] && [[ -z "$CI" ]]; then
   printf "Do you want to build kernel for GSI (y/n)? "
   read BUILD_GSI
 fi
 
 if [[ "$BUILD_GSI" == y ]]; then
-  ENABLE CONFIG_USB_ANDROID_GOOGLE_MTP
   TYPE=GSI
+
+  CONFIG
+  ENABLE CONFIG_USB_ANDROID_GOOGLE_MTP
+
   MAIN
 fi
 
 if [[ -z "$BUILD_ONEUI" ]] && [[ -z "$CI" ]]; then
   printf "Do you want to build kernel for OneUI (y/n)? "
-  read BUILD_GSI
+  read BUILD_ONEUI
 fi
 
 if [[ "$BUILD_ONEUI" == y ]]; then
-  DISABLE CONFIG_USB_ANDROID_GOOGLE_MTP
   TYPE=OneUI
+
+  CONFIG
+  DISABLE CONFIG_USB_ANDROID_GOOGLE_MTP
+
   MAIN
 fi
