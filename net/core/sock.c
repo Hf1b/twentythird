@@ -676,12 +676,12 @@ out:
 static int sock_set_domain_name(struct sock *sk, char __user *optval,
                 int optlen)
 {
-    int ret = -EADDRNOTAVAIL;
+  int ret = -EADDRNOTAVAIL;
 	char domain[DOMAIN_NAME_LEN_NAP];
 
-    ret = -EINVAL;
-    if (optlen < 0)
-        goto out;
+  ret = -EINVAL;
+  if (optlen < 0)
+    goto out;
 
 	if (optlen > DOMAIN_NAME_LEN_NAP - 1)
 		optlen = DOMAIN_NAME_LEN_NAP - 1;
@@ -690,8 +690,8 @@ static int sock_set_domain_name(struct sock *sk, char __user *optval,
 
     ret = -EFAULT;
     if (copy_from_user(domain, optval, optlen))
-        goto out;
-        memcpy(sk->domain_name,domain, sizeof(sk->domain_name)-1);
+      goto out;
+    memcpy(sk->domain_name,domain, sizeof(sk->domain_name)-1);
     ret = 0;
 
 out:
@@ -809,14 +809,19 @@ int sock_setsockopt(struct socket *sock, int level, int optname,
 	if (optname == SO_BINDTODEVICE)
 		return sock_setbindtodevice(sk, optval, optlen);
 
-    /* START_OF_KNOX_NPA */
-    if (optname == SO_SET_DOMAIN_NAME)
-        return sock_set_domain_name(sk, optval, optlen);
-    if (optname == SO_SET_DNS_UID)
-	return sock_set_dns_uid(sk, optval, optlen);
-	if (optname == SO_SET_DNS_PID)
+  /* START_OF_KNOX_NPA */
+  if (optname == SO_SET_DOMAIN_NAME) {
+    return sock_set_domain_name(sk, optval, optlen);
+  }
+
+  if (optname == SO_SET_DNS_UID) {
+  	return sock_set_dns_uid(sk, optval, optlen);
+  }
+
+	if (optname == SO_SET_DNS_PID) {
 		return sock_set_dns_pid(sk, optval, optlen);
-    /* END_OF_KNOX_NPA */
+  }
+  /* END_OF_KNOX_NPA */
 
 	if (optlen < sizeof(int))
 		return -EINVAL;
