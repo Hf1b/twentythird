@@ -115,9 +115,11 @@ ZIP() {
 
   cp $IMAGE releases/AnyKernel3/$TASK
   cd releases/AnyKernel3
+  touch $TYPE
   if [[ ! -d ../zip ]]; then mkdir ../zip; fi
   zip -r9 ../zip/$NAME.$TYPE-$VERSION.zip *
   rm $TASK
+  rm $TYPE
   cd ../..
 
   ECHO "Installer is done"
@@ -213,7 +215,7 @@ DISABLE() {
 MAIN() {
   BUILD
   ZIP
-  CLEAN
+  #CLEAN
 }
 
 if [[ -z "$CROSS_COMPILE" ]] && find -L toolchain -name 'gcc-linaro-*-linux-manifest.txt' 2>/dev/null | grep . &>/dev/null; then

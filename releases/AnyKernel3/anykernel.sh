@@ -31,6 +31,31 @@ ramdisk_compression=auto;
 
 ## AnyKernel install
 dump_boot;
-
+ui_print " * Installig kernel"
 write_boot;
+
+mount /system_root
+mount /vendor
+
+# GSI scenario
+if [[ -f "GSI" ]]; then
+  ui_print " * Type: GSI"
+
+  # Exynos 7904 check
+  if [[ -f "/vendor/etc/init/init.exynos7904.usb.rc" ]]; then
+    backup_file /system_root/init.usb.configfs.rc
+    replace_string /system_root/init.usb.configfs.rc "\\sstart adbd" "start adbd" "#start adbd" global
+
+    ui_print " * ADB & MTP fix is applied"
+  fi
+fi
+
+if [[ -f "OneUI" ]]; then
+  ui_print " * Type: OneUI"
+fi
+
+umount /system_root
+umount /vendor
+
+ui_print " * Kernel is installed"
 ## end install
