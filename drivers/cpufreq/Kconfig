@@ -138,6 +138,18 @@ config CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
 	  have a look at the help section of that governor. The fallback
 	  governor will be 'performance'.
 
+config CPU_FREQ_DEFAULT_GOV_SMARTMAX_EPS
+  bool "smartmax_eps"
+  select CPU_FREQ_GOV_SMARTMAX_EPS
+  help
+    Use the 'smartmax_eps' CPUFreq governor by default.
+
+config CPU_FREQ_DEFAULT_GOV_INTERACTIVEX
+  bool "interactivex"
+  select CPU_FREQ_GOV_INTERACTIVEX
+  help
+    Use the 'interactivex' CPUFreq governor by default.
+
 endchoice
 
 config CPU_FREQ_GOV_PERFORMANCE
@@ -267,6 +279,19 @@ config CPU_FREQ_GOV_SCHEDUTIL
 	  be called cpufreq_schedutil.
 
 	  If in doubt, say N.
+
+config CPU_FREQ_GOV_SMARTMAX_EPS
+  tristate "'smartmax_eps' cpufreq governor"
+  depends on CPU_FREQ
+  help
+    Advanced governor for power saving, combines ondemand and smartassV2
+
+config CPU_FREQ_GOV_INTERACTIVEX
+  tristate "'interactivex' cpufreq governor"
+  depends on CPU_FREQ
+  help
+    InteractiveX governor is based heavily on the Interactive governor,
+    enhanced with tuned timer parameters to better balance battery vs. performance.
 
 config FREQVAR_SCHEDTUNE
 	depends on CPU_FREQ_GOV_SCHEDUTIL

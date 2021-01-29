@@ -93,7 +93,7 @@ CONFIG() {
 BUILD() {
   CHECKCON
 
-  echo "Kernel $TYPE is being built"
+  ECHO "Is being built"
   make -j$((`nproc --all`+2)) $TASK
   if [[ $? == 0 ]]; then
     ECHO "Is built"
