@@ -1,6 +1,6 @@
 # Installer
 export VERSION=`git describe --tags` # Version of installer
-export NAME=kernel-v$VERSION.zip # Name for installer
+export NAME=kernel # Name for installer
 export TASK=Image # Build target, if you don't know what to write there - stay "Image" as task
 
 # Builder info
