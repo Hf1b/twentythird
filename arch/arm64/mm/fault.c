@@ -730,7 +730,7 @@ asmlinkage int __exception do_debug_exception(unsigned long addr_if_watchpoint,
 	if (unhandled_signal(current, inf->sig)
 	    && show_unhandled_signals_ratelimited())
 		pr_alert("Unhandled debug exception: %s (0x%08x) at 0x%016lx\n",
-			 inf->name, esr, addr);
+			 inf->name, esr, pc);
 
 	/*
 	 * Tell lockdep we disabled irqs in entry.S. Do nothing if they were
