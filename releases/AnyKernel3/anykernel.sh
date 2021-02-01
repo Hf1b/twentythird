@@ -43,16 +43,17 @@ cfs_rc=/system_root/init.usb.configfs.rc
 if [[ -f "GSI" ]]; then
   ui_print " * Type: GSI"
 
+  ## TODO: Implement this hecking fix
   # Exynos 7904 check
-  if [[ -f "/vendor/etc/init/init.exynos7904.usb.rc" ]] && [[ -f "$cfs_rc" ]]; then
-    backup_file $cfs_rc
-    replace_string $cfs_rc "##ADB&MTP-Erratum" "start adbd" "#start adbd" global
-    if ! grep -q "##ADB&MTP-Erratum" $cfs_rc; then
-      echo -ne "\n##ADB&MTP-Erratum\n" >> $cfs_rc;
-    fi
-
-    ui_print " * ADB & MTP fix is applied"
-  fi
+  #if [[ -f "/vendor/etc/init/init.exynos7904.usb.rc" ]] && [[ -f "$cfs_rc" ]]; then
+  #  backup_file $cfs_rc
+  #  replace_string $cfs_rc "##ADB&MTP-Erratum" "start adbd" "#start adbd" global
+  #  if ! grep -q "##ADB&MTP-Erratum" $cfs_rc; then
+  #    echo -ne "\n##ADB&MTP-Erratum\n" >> $cfs_rc;
+  #  fi
+  #
+  #  ui_print " * ADB & MTP fix is applied"
+  #fi
 fi
 
 if [[ -f "OneUI" ]]; then
