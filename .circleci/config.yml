@@ -21,7 +21,7 @@ jobs:
           apt update &>/dev/null
           apt install lib32z1 git build-essential bc zip curl -y &>/dev/null
       - run: |
-          curl -Lo linaro.tar.xz https://releases.linaro.org/components/toolchain/binaries/latest-6/aarch64-linux-gnu/gcc-linaro-6.5.0-2018.12-i686_aarch64-linux-gnu.tar.xz
+          curl -Lo linaro.tar.xz https://releases.linaro.org/components/toolchain/binaries/latest-7/aarch64-linux-gnu/gcc-linaro-7.5.0-2019.12-i686_aarch64-linux-gnu.tar.xz
           tar -xf linaro.tar.xz
           rm linaro.tar.xz
           mv gcc-linaro-* toolchain
