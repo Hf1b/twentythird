@@ -3,3 +3,16 @@
 *.tab.c
 *.tab.h
 genksyms
+
+asn1_compiler
+basic/bin2c
+dtc/dtc
+kallsyms
+
+mod/devicetable-offsets.h
+mod/elfconfig.h
+mod/mk_elfconfig
+mod/modpost
+
+selinux/genheaders/genheaders
+sortextable

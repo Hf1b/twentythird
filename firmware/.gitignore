@@ -1,0 +1,12 @@
+*.fw
+*.S
+
+# Exclude some bins
+!av7110/Boot.S
+!emulator8895_acpm_dvfs.fw
+!exynos7872_acpm_dvfs.fw
+!exynos7872_acpm_fvp.fw
+!exynos7885_acpm_fvp.fw
+!exynos8895_acpm_dvfs.fw
+!keyspan_pda/keyspan_pda.S
+!keyspan_pda/xircom_pgs.S
