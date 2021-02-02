@@ -3630,7 +3630,7 @@ void get_cm_array(void *dev_data)
 	return;
 
 out:
-	if (buf) sprintf(buf, "NG");
+	sprintf(buf, "NG");
 	sec_cmd_set_cmd_result(sec, buf, strnlen(buf, sizeof(buf)));
 
 	sec->cmd_state = SEC_CMD_STATUS_FAIL;
@@ -3673,7 +3673,7 @@ void get_slope0_array(void *dev_data)
 	return;
 
 out:
-	if (buf) sprintf(buf, "NG");
+	sprintf(buf, "NG");
 	sec_cmd_set_cmd_result(sec, buf, strnlen(buf, sizeof(buf)));
 
 	sec->cmd_state = SEC_CMD_STATUS_FAIL;
@@ -3716,7 +3716,7 @@ void get_slope1_array(void *dev_data)
 	return;
 
 out:
-	if (buf) sprintf(buf, "NG");
+	sprintf(buf, "NG");
 	sec_cmd_set_cmd_result(sec, buf, strnlen(buf, sizeof(buf)));
 
 	sec->cmd_state = SEC_CMD_STATUS_FAIL;
@@ -3765,7 +3765,7 @@ void get_cs_array(void *dev_data)
 	return;
 
 out:
-	if (buf) sprintf(buf, "NG");
+	sprintf(buf, "NG");
 	sec_cmd_set_cmd_result(sec, buf, strnlen(buf, sizeof(buf)));
 
 	sec->cmd_state = SEC_CMD_STATUS_FAIL;
@@ -4391,7 +4391,7 @@ int ist40xx_tclm_data_write(struct i2c_client *client)
 		   data->tdata->nvdata.cal_pos_hist_cnt,
 		   data->tdata->nvdata.cal_pos_hist_lastp);
 
-	memset(nbuff, 0x00, sizeof(nbuff));
+	memset(nbuff, 0x00, IST40XX_NVM_OFFSET_LENGTH);
 
 	nbuff[IST40XX_NVM_OFFSET_FAC_RESULT] = (u32)data->test_result.data[0];
 	nbuff[IST40XX_NVM_OFFSET_DISASSEMBLE_COUNT] = data->disassemble_count;

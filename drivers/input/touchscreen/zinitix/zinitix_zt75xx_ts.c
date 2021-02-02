@@ -4299,7 +4299,7 @@ static void run_dnd_v_gap_read(void *device_data)
 
 	sec_cmd_set_default_result(sec);
 
-	memset(raw_data->vgap_data, 0x00, sizeof(raw_data->vgap_data));
+	memset(raw_data->vgap_data, 0x00, TSP_CMD_NODE_NUM);
 
 	printk("DND V Gap start\n");
 
@@ -4383,7 +4383,7 @@ static void run_dnd_h_gap_read(void *device_data)
 
 	sec_cmd_set_default_result(sec);
 
-	memset(raw_data->hgap_data, 0x00, sizeof(raw_data->hgap_data));
+	memset(raw_data->hgap_data, 0x00, TSP_CMD_NODE_NUM);
 
 	printk("DND H Gap start\n");
 
@@ -4895,7 +4895,7 @@ static void run_hfdnd_v_gap_read(void *device_data)
 
 	sec_cmd_set_default_result(sec);
 
-	memset(raw_data->vgap_data, 0x00, sizeof(raw_data->vgap_data));
+	memset(raw_data->vgap_data, 0x00, TSP_CMD_NODE_NUM);
 
 	input_info(true, &info->client->dev, "HF DND V Gap start\n");
 
@@ -4983,7 +4983,7 @@ static void run_hfdnd_h_gap_read(void *device_data)
 
 	sec_cmd_set_default_result(sec);
 
-	memset(raw_data->hgap_data, 0x00, sizeof(raw_data->hgap_data));
+	memset(raw_data->hgap_data, 0x00, TSP_CMD_NODE_NUM);
 
 	input_info(true, &info->client->dev, "HF DND H Gap start\n");
 
@@ -5930,7 +5930,7 @@ static void run_selfdnd_v_gap_read(void *device_data)
 
 	sec_cmd_set_default_result(sec);
 
-	memset(raw_data->self_vgap_data, 0x00, sizeof(raw_data->self_vgap_data));
+	memset(raw_data->self_vgap_data, 0x00, TSP_CMD_NODE_NUM);
 
 	printk("SELFDND V Gap start\n");
 
@@ -5986,7 +5986,7 @@ static void run_selfdnd_h_gap_read(void *device_data)
 
 	sec_cmd_set_default_result(sec);
 
-	memset(raw_data->self_hgap_data, 0x00, sizeof(raw_data->self_hgap_data));
+	memset(raw_data->self_hgap_data, 0x00, TSP_CMD_NODE_NUM);
 
 	printk("SELFDND H Gap start\n");
 
