@@ -28,6 +28,7 @@ export KBUILD_BUILD_HOST=$HOST
 
 : ${TASK:=Image}
 : ${IMAGE:=arch/$ARCH/boot/$TASK}
+: ${DTBO:=arch/$ARCH/boot/dtbo.img}
 : ${CONFILE:=arch/$ARCH/configs/"$CONFIG"_defconfig}
 
 # Main stuff
@@ -94,7 +95,7 @@ BUILD() {
   CHECKCON
 
   ECHO "Is being built"
-  make -j$((`nproc --all`+2)) $TASK
+  make -j$THREADS $TASK && make dtbo.img
   if [[ $? == 0 ]]; then
     ECHO "Is built"
   else
@@ -114,11 +115,13 @@ ZIP() {
   ECHO "Is being zipped"
 
   cp $IMAGE releases/AnyKernel3/$TASK
+  cp $DTBO releases/AnyKernel3/dtbo.img
   cd releases/AnyKernel3
   touch $TYPE
   if [[ ! -d ../zip ]]; then mkdir ../zip; fi
   zip -r9 ../zip/$NAME.$TYPE-$VERSION.zip *
   rm $TASK
+  rm dtbo.img
   rm $TYPE
   cd ../..
 
@@ -217,6 +220,8 @@ MAIN() {
   ZIP
   #CLEAN
 }
+
+export THREADS=$((`nproc --all`+2))
 
 if [[ -z "$CROSS_COMPILE" ]] && find -L toolchain -name 'gcc-linaro-*-linux-manifest.txt' 2>/dev/null | grep . &>/dev/null; then
   export CROSS_COMPILE=`pwd`/toolchain/bin/aarch64-linux-gnu-

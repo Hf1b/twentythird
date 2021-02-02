@@ -14,4 +14,5 @@ export CONFIG=exynos7885-a30s # Defconfig name
 
 # Expert stuff
 export IMAGE= # Image path, unnecessary, doesn't affect image building path
+export DTBO= # dtbo.img path, unnecessary, doesn't affect dtbo.img building path
 export CONFILE= # Defconfig path, unnecessary
