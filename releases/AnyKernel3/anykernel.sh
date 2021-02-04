@@ -21,7 +21,7 @@ supported.patchlevels=
 
 # shell variables
 block=/dev/block/platform/13500000.dwmmc0/by-name/boot;
-dtboblock=/dev/block/platform/13500000.dwmmc0/by-name/dtbo;
+# dtboblock is hardcoded in flash_dtbo() of ak3-core.sh
 is_slot_device=0;
 ramdisk_compression=auto;
 
