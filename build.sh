@@ -115,13 +115,13 @@ ZIP() {
   ECHO "Is being zipped"
 
   cp $IMAGE releases/AnyKernel3/$TASK
-  cp $DTBO releases/AnyKernel3/dtbo.img
+  #cp $DTBO releases/AnyKernel3/dtbo.img
   cd releases/AnyKernel3
   touch $TYPE
   if [[ ! -d ../zip ]]; then mkdir ../zip; fi
   zip -r9 ../zip/$NAME.$TYPE-$VERSION.zip *
   rm $TASK
-  rm dtbo.img
+  #rm dtbo.img
   rm $TYPE
   cd ../..
 

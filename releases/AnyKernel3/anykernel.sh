@@ -45,12 +45,12 @@ if [[ -f "GSI" ]]; then
   ui_print " * Type: GSI"
 
   # Exynos 7904 check
-  if [[ -f "/vendor/etc/init/init.exynos7904.usb.rc" ]] && [[ -f "$cfs_rc" ]]; then
-    backup_file $cfs_rc
-    replace_file $cfs_rc 750 init.usb.configfs.rc
-
-    ui_print " * ADB & MTP fix is applied"
-  fi
+  #if [[ -f "/vendor/etc/init/init.exynos7904.usb.rc" ]] && [[ -f "$cfs_rc" ]]; then
+  #  backup_file $cfs_rc
+  #  replace_file $cfs_rc 750 init.usb.configfs.rc
+  #
+  #  ui_print " * ADB & MTP fix is applied"
+  #fi
 fi
 
 if [[ -f "OneUI" ]]; then
